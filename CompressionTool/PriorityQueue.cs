@@ -1,11 +1,11 @@
 namespace PQueue
 {
-    public class Node
+    public class HeapNode
     {
-        public char Character { get; set; }
+        public char? Character { get; set; }
         public int Frequency { get; set; }
 
-        public Node(char character, int frequency)
+        public HeapNode(char? character, int frequency)
         {
             Character = character;
             Frequency = frequency;
@@ -14,21 +14,22 @@ namespace PQueue
 
     public class PriorityQueue
     {
-        List<Node> heap;
+        public List<HeapNode> heap;
 
         public PriorityQueue()
         {
-            heap = new List<Node>();
-            heap.Add(new Node('d', 0));
+            heap = new List<HeapNode>();
+            heap.Add(new HeapNode('d', 0));
         }
 
-        public void Push(Node val)
+        public void Push(char? character, int val)
         {
-            heap.Add(val);
+            HeapNode newNode = new HeapNode(character, val);
+            heap.Add(newNode);
             BubbleUp(heap.Count - 1);
         }
 
-        public Node? Pop()
+        public HeapNode? Pop()
         {
             if (heap.Count == 1)
             {
@@ -37,12 +38,12 @@ namespace PQueue
 
             if (heap.Count == 2)
             {
-                Node pop = heap[1];
+                HeapNode pop = heap[1];
                 heap.RemoveAt(1);
                 return pop;
             }
 
-            Node root = heap[1];
+            HeapNode root = heap[1];
             heap[1] = heap[heap.Count - 1];
             heap.RemoveAt(heap.Count - 1);
             if (heap.Count > 1)
@@ -52,15 +53,15 @@ namespace PQueue
             return root;
         }
 
-        public Node? Top()
+        public HeapNode? Top()
         {
             return heap.Count > 1 ? heap[1] : null;
         }
 
-        public void Heapify(List<Node> nums)
+        public void Heapify(List<HeapNode> nums)
         {
-            heap = new List<Node>();
-            heap.Add(new Node('d', 0));
+            heap = new List<HeapNode>();
+            heap.Add(new HeapNode('d', 0));
             heap.AddRange(nums);
 
             for (int i = heap.Count / 2; i >= 1; i--)
@@ -120,7 +121,7 @@ namespace PQueue
 
         public void Swap(int i, int j)
         {
-            Node tmp = heap[i];
+            HeapNode tmp = heap[i];
             heap[i] = heap[j];
             heap[j] = tmp;
         }
