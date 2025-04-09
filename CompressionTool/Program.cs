@@ -9,6 +9,16 @@ namespace CompressionTool
   {
     public static int Main(string[] args)
     {
+      var host = CreateHostBuilder(args).Build();
+      using var scope = host.Services.CreateScope();
+      var compressionTool = scope.ServiceProvider.GetRequiredService<ICompressor>();
+      compressionTool.Run(args[0]);
+
+      return 0;
+    }
+
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
       var builder = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
@@ -23,12 +33,7 @@ namespace CompressionTool
                 .AddEnvironmentVariables();
         });
 
-      var host = builder.Build();
-
-      // Run the host
-      host.RunAsync();
-
-      return 0;
+      return builder;
     }
   }
 }

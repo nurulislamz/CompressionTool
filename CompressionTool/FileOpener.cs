@@ -1,19 +1,22 @@
 using System;
 
-public interface IFileOpener
+namespace CompressionTool
 {
-  public string OpenFile(string path);
-}
-
-public class FileOpener : IFileOpener
-{
-
-  public string OpenFile(string path)
+  public interface IFileOpener
   {
-    if (!File.Exists(path))
+    public string OpenFile(string path);
+  }
+
+  public class FileOpener : IFileOpener
+  {
+
+    public string OpenFile(string path)
     {
-      throw new FileNotFoundException("File not found");
+      if (!File.Exists(path))
+      {
+        throw new FileNotFoundException("File not found");
+      }
+      return File.ReadAllText(path);
     }
-    return File.ReadAllText(path);
   }
 }

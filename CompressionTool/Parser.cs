@@ -1,34 +1,35 @@
-using System.Collections.Generic;
 
-public interface IParser
-{
-  public Dictionary<char, int> Parse();
-}
-
-public class Parser : IParser
-{
-  private readonly string _fileContents;
-  private Dictionary<char, int> frequency;
-
-  public Parser(string fileContents)
+namespace CompressionTool {
+  public interface IParser
   {
-    _fileContents = fileContents;
-    frequency = new Dictionary<char, int>();
+    public Dictionary<char, int> Parse();
   }
 
-  public Dictionary<char, int> Parse()
+  public class Parser : IParser
   {
-    foreach (var character in _fileContents)
+    private readonly string _fileContents;
+    private Dictionary<char, int> frequency;
+
+    public Parser(string fileContents)
     {
-      if (frequency.ContainsKey(character))
-      {
-        frequency[character]++;
-      }
-      else
-      {
-        frequency.Add(character, 1);
-      }
+      _fileContents = fileContents;
+      frequency = new Dictionary<char, int>();
     }
-    return frequency;
+
+    public Dictionary<char, int> Parse()
+    {
+      foreach (var character in _fileContents)
+      {
+        if (frequency.ContainsKey(character))
+        {
+          frequency[character]++;
+        }
+        else
+        {
+          frequency.Add(character, 1);
+        }
+      }
+      return frequency;
+    }
   }
 }
