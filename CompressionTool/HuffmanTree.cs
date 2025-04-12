@@ -1,5 +1,3 @@
-using PQueue;
-
 namespace CompressionTool
 {
   public class HuffmanNode
@@ -61,7 +59,6 @@ namespace CompressionTool
 
     public void BuildTree()
     {
-      CreatePriorityQueue();
       BuildHuffmanTreeFromPriorityQueue();
     }
   }

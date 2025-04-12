@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using System.CommandLine;
 
 namespace CompressionTool
 {
@@ -9,10 +10,11 @@ namespace CompressionTool
   {
     public static int Main(string[] args)
     {
+
       var host = CreateHostBuilder(args).Build();
       using var scope = host.Services.CreateScope();
-      var compressionTool = scope.ServiceProvider.GetRequiredService<ICompressor>();
-      compressionTool.Run(args[0]);
+      var app = scope.ServiceProvider.GetRequiredService<App>();
+      app.Run(args);
 
       return 0;
     }
@@ -22,15 +24,11 @@ namespace CompressionTool
       var builder = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
-          services.AddSingleton<IFileOpener, FileOpener>();
-          services.AddSingleton<IParser, Parser>();
-        })
-        .ConfigureAppConfiguration((hostContext, config) =>
-        {
-          config.SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+          services.AddSingleton<App>();
+          services.AddTransient<IParseArguments, ParseArguments>();
+          services.AddTransient<IFileOpener, FileOpener>();
+          services.AddTransient<IFrequencyCounter, FrequencyCounter>();
+          services.AddTransient<IPriorityQueue, PriorityQueue>();
         });
 
       return builder;

@@ -1,5 +1,13 @@
-namespace PQueue
+namespace CompressionTool
 {
+    public interface IPriorityQueue
+    {
+        public void Push(char? character, int val);
+        public HeapNode? Pop();
+        public HeapNode? Top();
+        public void Heapify(List<HeapNode> nums);
+    }
+    
     public class HeapNode
     {
         public char? Character { get; set; }
@@ -12,14 +20,14 @@ namespace PQueue
         }
     }
 
-    public class PriorityQueue
+    public class PriorityQueue : IPriorityQueue
     {
         public List<HeapNode> heap;
 
         public PriorityQueue()
         {
             heap = new List<HeapNode>();
-            heap.Add(new HeapNode('d', 0));
+            heap.Add(new HeapNode(null, 0));
         }
 
         public void Push(char? character, int val)

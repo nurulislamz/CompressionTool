@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Compress": {
+      "commandName": "Project",
+      "commandLineArgs": "-f C:/Users/nurul/source/repos/CompressionTool/CompressionTool/Example/test1.txt -m Compress"
+    }
+  }
+}
