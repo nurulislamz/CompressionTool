@@ -9,20 +9,20 @@ namespace CompressionTool
     Decompress
   }
 
-  public class ParseResult
+  public class ParsedResult
   {
     public required string FilePath { get; init; }
     public required ModeOptions Mode { get; init; }
   }
 
-  public interface IParseArguments
+  public interface IArgumentParser 
   {
-    public Task<ParseResult> ParseCommandLine(string[] args);
+    public Task<ParsedResult> ParseCommandLine(string[] args);
   }
 
-  public class ParseArguments : IParseArguments
+  public class ArgumentParser : IArgumentParser
   {
-    public async Task<ParseResult> ParseCommandLine(string[] args)
+    public async Task<ParsedResult> ParseCommandLine(string[] args)
     {
       var fileOption = new Option<FileInfo?>(
         name: "-f",
@@ -39,11 +39,11 @@ namespace CompressionTool
       rootCommand.AddOption(fileOption);
       rootCommand.AddOption(modeOption);
 
-      ParseResult result = null;
+      ParsedResult result = null;
 
       rootCommand.SetHandler((FileInfo? file, string mode) =>
       {
-        if (file == null) throw new ArgumentNullException(nameof(file));
+        if (file == null || file.Exists == false) throw new FileNotFoundException(nameof(file));
         string filePath = file.FullName.Replace('\\', '/');
 
         ModeOptions chosenMode = mode switch
@@ -53,7 +53,7 @@ namespace CompressionTool
           _ => throw new ArgumentException("Incorrect Mode Option")
         };
 
-        result = new ParseResult
+        result = new ParsedResult
         {
           FilePath = filePath,
           Mode = chosenMode
@@ -62,7 +62,7 @@ namespace CompressionTool
       fileOption, modeOption);
 
       await rootCommand.InvokeAsync(args);
-      return result ?? throw new Exception("Failed to parse arguments");
+      return result ?? throw new ArgumentException("Failed to parse arguments");
     }
   }
 }

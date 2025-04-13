@@ -3,21 +3,21 @@ namespace CompressionTool
   public class App
   {
     private readonly IFileOpener _fileOpener;
-    private readonly IParseArguments _parseArguments;
+    private readonly IArgumentParser _argumentParser;
     private readonly IFrequencyCounter _frequencyCounter;
     private readonly IPriorityQueue _priorityQueue;
 
-    public App(IFileOpener FileOpener, IParseArguments ParseArguments, IFrequencyCounter FrequencyCounter, IPriorityQueue PriorityQueue)
+    public App(IFileOpener FileOpener, IArgumentParser ArgumentParser, IFrequencyCounter FrequencyCounter, IPriorityQueue PriorityQueue)
     {
       _fileOpener = FileOpener;
-      _parseArguments = ParseArguments;
+      _argumentParser = ArgumentParser;
       _frequencyCounter = FrequencyCounter;
       _priorityQueue = PriorityQueue;
     }
 
     public async void Run(string[] args)
     {
-      var result = await _parseArguments.ParseCommandLine(args);
+      var result = await _argumentParser.ParseCommandLine(args);
       string text = _fileOpener.OpenFile(result.FilePath);
       if (result.Mode == ModeOptions.Compress)
       {

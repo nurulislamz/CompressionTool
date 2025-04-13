@@ -25,7 +25,7 @@ namespace CompressionTool
         .ConfigureServices((hostContext, services) =>
         {
           services.AddSingleton<App>();
-          services.AddTransient<IParseArguments, ParseArguments>();
+          services.AddTransient<IArgumentParser, ArgumentParser>();
           services.AddTransient<IFileOpener, FileOpener>();
           services.AddTransient<IFrequencyCounter, FrequencyCounter>();
           services.AddTransient<IPriorityQueue, PriorityQueue>();

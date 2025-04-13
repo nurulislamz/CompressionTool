@@ -21,4 +21,15 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\CompressionTool\CompressionTool.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Examples\test1.txt" />
+      <Resource Include="TestData\test1.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+    </ItemGroup>
+
 </Project>

@@ -14,32 +14,21 @@ namespace CompressionTool
       Left = null;
       Right = null;
     }
+
+    public bool IsLeah => Character.HasValue;
   }
 
   public class HuffmanTree
   {
-    private Dictionary<char, int> _characterFrequency;
-    private PriorityQueue priorityQueue;
-    private HuffmanNode? root;
+    public HuffmanNode? root;
+    private Dictionary<char, List<bool>> _encodingMap;
 
-    public HuffmanTree(Dictionary<char, int> characterFrequency)
+    public HuffmanTree()
     {
-      _characterFrequency = characterFrequency;
-      priorityQueue = new PriorityQueue();
+      _encodingMap = new Dictionary<char, List<bool>>();
     }
 
-    public void CreatePriorityQueue()
-    {
-      List<HeapNode> listFreq = new List<HeapNode>();
-      foreach (var pair in _characterFrequency)
-      {
-        listFreq.Add(new HeapNode(pair.Key, pair.Value));
-      }
-
-      priorityQueue.Heapify(listFreq);
-    }
-
-    public void BuildHuffmanTreeFromPriorityQueue()
+    public void BuildHuffmanTreeFromPriorityQueue(PriorityQueue priorityQueue)
     {
       while (priorityQueue.heap.Count > 2)
       {
@@ -57,9 +46,37 @@ namespace CompressionTool
       }
     }
 
-    public void BuildTree()
+    public void EncodeHuffmanTree()
     {
-      BuildHuffmanTreeFromPriorityQueue();
+      if (root == null)
+      {
+        throw new Exception("HuffmanTree is empty");
+      }
+
+      GenerateEncodingsRecursive(root, new List<bool>());
     }
+
+    private void GenerateEncodingsRecursive(HuffmanNode node, List<bool> encoding)
+    {
+        if (node.Character.HasValue)
+        {
+            _encodingMap[node.Character.Value] = new List<bool>(encoding);
+            return;
+        }
+
+        if (node.Left != null)
+        {
+            encoding.Add(false); // 0
+            GenerateEncodingsRecursive(node.Left, encoding);
+            encoding.RemoveAt(encoding.Count - 1);
+        }
+        if (node.Right != null)
+        {
+            encoding.Add(true); // 1
+            GenerateEncodingsRecursive(node.Right, encoding);
+            encoding.RemoveAt(encoding.Count - 1);
+        }
+    }
+
   }
 }
