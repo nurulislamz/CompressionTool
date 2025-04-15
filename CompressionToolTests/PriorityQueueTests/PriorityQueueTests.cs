@@ -17,9 +17,9 @@ public class PriorityQueueTests
     public void Push_AddsNode_InCorrectOrder()
     {
         // Arrange & Act
-        _priorityQueue.Push('a', 3);
-        _priorityQueue.Push('b', 1);
-        _priorityQueue.Push('c', 2);
+        _priorityQueue.Push(new HuffmanNode('a', 3));
+        _priorityQueue.Push(new HuffmanNode('b', 1));
+        _priorityQueue.Push(new HuffmanNode('c', 2));
 
         // Assert
         var top = _priorityQueue.Top();
@@ -31,9 +31,9 @@ public class PriorityQueueTests
     public void Pop_RemovesNodes_InCorrectOrder()
     {
         // Arrange
-        _priorityQueue.Push('a', 3);
-        _priorityQueue.Push('b', 1);
-        _priorityQueue.Push('c', 2);
+        _priorityQueue.Push(new HuffmanNode('a', 3));
+        _priorityQueue.Push(new HuffmanNode('b', 1));
+        _priorityQueue.Push(new HuffmanNode('c', 2));
 
         // Act & Assert
         var first = _priorityQueue.Pop();
@@ -53,7 +53,7 @@ public class PriorityQueueTests
     public void Top_ReturnsFirstElement_WithoutRemoving()
     {
         // Arrange
-        _priorityQueue.Push('a', 1);
+        _priorityQueue.Push(new HuffmanNode('a', 1));
 
         // Act
         var peeked = _priorityQueue.Top();
@@ -70,7 +70,7 @@ public class PriorityQueueTests
     public void Pop_EmptyQueue_ReturnsNull()
     {
         // Act & Assert
-        Assert.That(_priorityQueue.Pop(), Is.Null);
+        Assert.Throws<Exception>(() => _priorityQueue.Pop());
     }
 
     [Test]

@@ -2,56 +2,63 @@ namespace CompressionTool
 {
     public interface IPriorityQueue
     {
-        public void Push(char? character, int val);
-        public HeapNode? Pop();
-        public HeapNode? Top();
-        public void Heapify(List<HeapNode> nums);
+        public void Push(HuffmanNode huffmanNode);
+        public HuffmanNode? Pop();
+        public HuffmanNode? Top();
+        public void Heapify(List<HuffmanNode> nums);
+        public int Count();
     }
-    
-    public class HeapNode
+
+    public class HuffmanNode
     {
         public char? Character { get; set; }
         public int Frequency { get; set; }
+        public HuffmanNode? Left { get; set; }
+        public HuffmanNode? Right { get; set; }
 
-        public HeapNode(char? character, int frequency)
+        public HuffmanNode(char? character, int frequency)
         {
             Character = character;
             Frequency = frequency;
+            Left = null;
+            Right = null;
         }
-    }
 
+        public bool IsLeaf => Character.HasValue;
+
+    }
     public class PriorityQueue : IPriorityQueue
     {
-        public List<HeapNode> heap;
+        public List<HuffmanNode> heap;
 
         public PriorityQueue()
         {
-            heap = new List<HeapNode>();
-            heap.Add(new HeapNode(null, 0));
+            heap = new List<HuffmanNode>();
+            heap.Add(new HuffmanNode(null, 0));
         }
 
-        public void Push(char? character, int val)
+        public int Count() => heap.Count;
+        public void Push(HuffmanNode newNode)
         {
-            HeapNode newNode = new HeapNode(character, val);
             heap.Add(newNode);
             BubbleUp(heap.Count - 1);
         }
 
-        public HeapNode? Pop()
+        public HuffmanNode? Pop()
         {
             if (heap.Count == 1)
             {
-                return null;
+                throw new Exception("Empty heap");
             }
 
             if (heap.Count == 2)
             {
-                HeapNode pop = heap[1];
+                HuffmanNode pop = heap[1];
                 heap.RemoveAt(1);
                 return pop;
             }
 
-            HeapNode root = heap[1];
+            HuffmanNode root = heap[1];
             heap[1] = heap[heap.Count - 1];
             heap.RemoveAt(heap.Count - 1);
             if (heap.Count > 1)
@@ -61,15 +68,15 @@ namespace CompressionTool
             return root;
         }
 
-        public HeapNode? Top()
+        public HuffmanNode? Top()
         {
             return heap.Count > 1 ? heap[1] : null;
         }
 
-        public void Heapify(List<HeapNode> nums)
+        public void Heapify(List<HuffmanNode> nums)
         {
-            heap = new List<HeapNode>();
-            heap.Add(new HeapNode('d', 0));
+            heap = new List<HuffmanNode>();
+            heap.Add(new HuffmanNode('d', 0));
             heap.AddRange(nums);
 
             for (int i = heap.Count / 2; i >= 1; i--)
@@ -129,7 +136,7 @@ namespace CompressionTool
 
         public void Swap(int i, int j)
         {
-            HeapNode tmp = heap[i];
+            HuffmanNode tmp = heap[i];
             heap[i] = heap[j];
             heap[j] = tmp;
         }

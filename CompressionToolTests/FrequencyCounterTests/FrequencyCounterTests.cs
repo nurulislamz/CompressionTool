@@ -6,14 +6,12 @@ namespace CompressionToolTests;
 
 public class FrequencyCounterTests
 {
-    private IFileOpener _fileOpener;
     private IFrequencyCounter _frequencyCounter;
     private string _testFilePath;
 
     [SetUp]
     public void Setup()
     {
-        _fileOpener = new FileOpener();
         _frequencyCounter = new FrequencyCounter();
 
         // Get the test file path relative to the test project
@@ -48,7 +46,7 @@ public class FrequencyCounterTests
     public void FrequencyCounter_WithTestFile_ReturnsCorrectResult()
     {
         // Arrange
-        var fileContent = _fileOpener.OpenFile(_testFilePath);
+        var fileContent = File.ReadAllText(_testFilePath);
 
         // Act
         var actualResult = _frequencyCounter.CountFrequency(fileContent);

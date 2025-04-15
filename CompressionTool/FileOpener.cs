@@ -2,12 +2,12 @@ using System;
 
 namespace CompressionTool
 {
-  public interface IFileOpener
+  public interface IFileHandler
   {
     public string OpenFile(string path);
   }
 
-  public class FileOpener : IFileOpener
+  public class FileHandler : IFileHandler
   {
 
     public string OpenFile(string path)

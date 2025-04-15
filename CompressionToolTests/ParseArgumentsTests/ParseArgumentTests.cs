@@ -9,7 +9,6 @@ public class ParseArgumentTests
     private string[] _testArgs;
     private string[] _testArgsWithInvalidArgs;
 
-    private IFileOpener _fileOpener;
     private IFrequencyCounter _frequencyCounter;
     private string _testFilePath;
 
