@@ -28,6 +28,8 @@ namespace CompressionTool
           services.AddTransient<IArgumentParser, ArgumentParser>();
           services.AddTransient<IFrequencyCounter, FrequencyCounter>();
           services.AddTransient<IPriorityQueue, PriorityQueue>();
+          services.AddTransient<IHuffmanTree, HuffmanTree>();
+          services.AddTransient<ICompress, Compress>();
         });
 
       return builder;

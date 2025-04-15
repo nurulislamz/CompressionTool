@@ -1,9 +1,19 @@
 using System.Text;
 using System.IO;
+using System.Text.Json;
 
 namespace CompressionTool
 {
-  public class HuffmanTree
+  public interface IHuffmanTree
+  {
+    void BuildHuffmanTreeFromPriorityQueue(IPriorityQueue priorityQueue);
+    void EncodeHuffmanTree();
+    Dictionary<char, List<bool>> GetEncodingMapAsDictionary();
+    byte[] ConvertHuffmanTreeToByteArray();
+    HuffmanTree ConvertByteArrayToHuffmanTree(byte[] bytes);
+  }
+
+  public class HuffmanTree : IHuffmanTree
   {
     public HuffmanNode? root;
     private Dictionary<char, List<bool>> _encodingMap;
@@ -71,44 +81,78 @@ namespace CompressionTool
       }
     }
 
-    public Dictionary<char, List<bool>> GetEncodingMapAsDictionary()
-    {
-      return _encodingMap.ToDictionary(
-          kvp => kvp.Key,
-          kvp => new List<bool>(kvp.Value)
-      );
-    }
+    public Dictionary<char, List<bool>> GetEncodingMapAsDictionary() => _encodingMap;
 
     public byte[] ConvertHuffmanTreeToByteArray()
     {
       using (var memoryStream = new MemoryStream())
+      using (var writer = new BinaryWriter(memoryStream, Encoding.UTF8, true))
       {
-        WriteHuffmanTree(memoryStream, root);
+        WriteHuffmanTree(writer, root);
         return memoryStream.ToArray();
       }
     }
 
-    private void WriteHuffmanTree(MemoryStream memoryStream, HuffmanNode node)
+    private void WriteHuffmanTree(BinaryWriter writer, HuffmanNode node)
     {
       if (node == null) return;
 
-      using (var writer = new BinaryWriter(memoryStream, Encoding.UTF8, true))
+      if (node.Character.HasValue)
       {
-        if (node.Character.HasValue)
-        {
-          // Write a marker for leaf nodes
-          writer.Write((byte)1); // Indicates a leaf node
-          writer.Write((byte)node.Character.Value); // Write the character
-          writer.Write(node.Frequency); // Write the frequency
-        }
-        else
-        {
-          // Write a marker for internal nodes
-          writer.Write((byte)0); // Indicates an internal node
-          WriteHuffmanTree(memoryStream, node.Left);
-          WriteHuffmanTree(memoryStream, node.Right);
-        }
+        writer.Write((byte)1); // Indicates a leaf node
+        writer.Write((byte)node.Character.Value); // Write the character
+        writer.Write(node.Frequency); // Write the frequency
       }
+      else
+      {
+        writer.Write((byte)0); // Indicates an internal node
+        WriteHuffmanTree(writer, node.Left);
+        WriteHuffmanTree(writer, node.Right);
+      }
+    }
+
+    public HuffmanTree ConvertByteArrayToHuffmanTree(byte[] bytes)
+    {
+      var tree = new HuffmanTree();
+      using (var memoryStream = new MemoryStream(bytes))
+      using (var reader = new BinaryReader(memoryStream, Encoding.UTF8, true))
+      {
+        tree.root = ReadHuffmanTreeNode(reader);
+      }
+      return tree;
+    }
+
+    private HuffmanNode ReadHuffmanTreeNode(BinaryReader reader)
+    {
+      // Read the node type marker
+      byte nodeType = reader.ReadByte();
+
+      if (nodeType == 1) // Leaf node
+      {
+        // Read the character and frequency
+        char character = (char)reader.ReadByte();
+        int frequency = reader.ReadInt32();
+        return new HuffmanNode(character, frequency);
+      }
+      else // Internal node
+      {
+        // Create an internal node and recursively read its children
+        var left = ReadHuffmanTreeNode(reader);
+        var right = ReadHuffmanTreeNode(reader);
+
+        var node = new HuffmanNode(null, left.Frequency + right.Frequency)
+        {
+          Left = left,
+          Right = right
+        };
+        return node;
+      }
+    }
+
+    public static string SaveFrequencyTableToJson(Dictionary<char, int> frequencyTable)
+    {
+      var jsonString = JsonSerializer.Serialize(frequencyTable);
+      return jsonString;
     }
   }
 }

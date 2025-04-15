@@ -159,25 +159,37 @@ public class HuffmanTreeTests
     }
 
     [Test]
-    public void GetEncodingMapAsDictionary_And_GetEncodingMapAsString_ProduceConsistentResults()
+    public void ConvertHuffmanTreeToByteArrayAndBack_PreservesTreeStructure()
     {
         // Arrange
         _huffmanTree = new HuffmanTree();
         _huffmanTree.BuildHuffmanTreeFromPriorityQueue(_priorityQueue);
         _huffmanTree.EncodeHuffmanTree();
+        var originalEncodings = _huffmanTree.GetEncodingMapAsDictionary();
 
         // Act
-        var encodingDict = _huffmanTree.GetEncodingMapAsDictionary();
-        var encodingString = _huffmanTree.();
+        byte[] treeBytes = _huffmanTree.ConvertHuffmanTreeToByteArray();
+        var reconstructedTree = HuffmanTree.ConvertByteArrayToHuffmanTree(treeBytes);
+        reconstructedTree.EncodeHuffmanTree();
+        var reconstructedEncodings = reconstructedTree.GetEncodingMapAsDictionary();
 
         // Assert
-        // Convert dictionary to string format for comparison
-        var dictAsString = string.Join("\n", encodingDict.Select(kvp =>
-            $"{kvp.Key}:{string.Join("", kvp.Value.Select(b => b ? "1" : "0"))}"
-        ));
+        Assert.That(reconstructedEncodings.Count, Is.EqualTo(originalEncodings.Count),
+            "Both trees should have the same number of characters");
 
-        // Compare the string representations
-        Assert.That(encodingString, Is.EqualTo(dictAsString),
-            "String representation should match dictionary representation");
+        foreach (var kvp in originalEncodings)
+        {
+            char character = kvp.Key;
+            var originalEncoding = kvp.Value;
+
+            // Check if character exists in reconstructed encodings
+            Assert.That(reconstructedEncodings.ContainsKey(character),
+                $"Reconstructed tree should contain character '{character}'");
+
+            // Check if encoding is the same
+            var reconstructedEncoding = reconstructedEncodings[character];
+            CollectionAssert.AreEqual(originalEncoding, reconstructedEncoding,
+                $"Encoding for character '{character}' should be identical");
+        }
     }
 }
